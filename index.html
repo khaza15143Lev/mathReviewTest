@@ -1,0 +1,707 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Homework 1</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1></h1>
+      <nav>
+        <ul>
+          <li><a href="#" class="tab-link active" onclick="showTab('PROB1')">Problem 1</a></li>
+          <li><a href="#" class="tab-link" onclick="showTab('PROB2')">Problem 2</a></li>
+          <li><a href="#" class="tab-link" onclick="showTab('PROB3')">Problem 3</a></li>
+          <li><a href="#" class="tab-link" onclick="showTab('PROB4')">Problem 4</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <div id="name-section">
+        <input type="text" id="username" placeholder="Enter your name" />
+        <button id="submitName">Submit</button>
+      </div>
+
+      <!-- Problem 1: Vector Operations -->
+      <section id="PROB1" class="tab-content active">
+        <div class="container" id="vectors">
+          <h1>Homework 1</h1>
+          <h1>Problem 1: Vector Operations</h1>
+          <h2>Maximum score: 6 pts</h2>
+          <div id="score1" class="score">Score: 0</div>
+          <div id="question1"></div>
+          <div id="answer-input1" style="display: none">
+            <p>Does the answer exist?</p>
+            <button onclick="checkExistence1(true)">Yes</button>
+            <button onclick="checkExistence1(false)">No</button>
+          </div>
+          <div id="vector-input1" style="display: none">
+            <p>Enter your answer:</p>
+            <div id="input-fields1"></div>
+            <button onclick="checkAnswer1()">Submit</button>
+          </div>
+          <div id="message1" class="message"></div>
+          <button onclick="nextQuestion1()" style="display: none">Next Question</button>
+        </div>
+      </section>
+
+      <!-- Problem 2: Matrix Addition/Subtraction -->
+      <section id="PROB2" class="tab-content">
+        <div class="container">
+          <h1>Homework 1</h1>
+          <h1>Problem 2: Matrix Addition/Subtraction</h1>
+          <h1>Maximum Score 9</h1>
+          <div id="score2" class="score">Score: 0</div>
+          <div id="question2"></div>
+          <div id="matrices2"></div>
+          <div id="answer-input2" style="display: none">
+            <p>Does the answer exist?</p>
+            <button onclick="checkExistence2(true)">Yes</button>
+            <button onclick="checkExistence2(false)">No</button>
+          </div>
+          <div id="matrix-input2" style="display: none">
+            <p>Enter your answer:</p>
+            <div id="input-fields2"></div>
+            <button onclick="checkAnswer2()">Submit</button>
+          </div>
+          <div id="message2" class="message"></div>
+          <button onclick="nextQuestion2()" style="display: none">Next Question</button>
+        </div>
+      </section>
+
+      <!-- Problem 3: Matrix Transpose -->
+      <section id="PROB3" class="tab-content">
+        <div class="container">
+          <h1>Homework 1</h1>
+          <h1>Problem 3: Matrix Transpose</h1>
+          <h2>Maximum Score: 6</h2>
+          <div id="score3" class="score">Score: 0</div>
+          <div id="question3"></div>
+          <div id="matrix3"></div>
+          <div id="dimension-input3" style="display: none">
+            <p>Enter the dimensions of the transposed matrix:</p>
+            <input type="number" id="rows3" placeholder="Rows" min="2" max="4" />
+            <input type="number" id="cols3" placeholder="Columns" min="2" max="4" />
+            <button onclick="checkDimensions3()">Submit Dimensions</button>
+          </div>
+          <div id="transpose-input3" style="display: none">
+            <p>Enter the transposed matrix:</p>
+            <div id="input-fields3"></div>
+            <button onclick="checkTranspose3()">Submit Transpose</button>
+          </div>
+          <div id="message3" class="message"></div>
+          <button onclick="nextQuestion3()" style="display: none">Next Question</button>
+        </div>
+      </section>
+
+      <!-- Problem 4: Matrix Multiplication -->
+      <section id="PROB4" class="tab-content">
+        <div class="container">
+          <h1>Homework 1</h1>
+          <h1>Problem 4: Matrix Multiplication</h1>
+          <h2>Maximum Score: 15</h2>
+          <div id="score4" class="score">Score: 0</div>
+          <div id="question"></div>
+          <div id="matrices"></div>
+          <div id="existence-input" style="display: none">
+            <p>Does a product exist for these matrices?</p>
+            <button onclick="checkExistence(true)">Yes</button>
+            <button onclick="checkExistence(false)">No</button>
+          </div>
+          <div id="dimension-input" style="display: none">
+            <p>Enter the dimensions of the product matrix:</p>
+            <input type="number" id="rows" placeholder="Rows" min="2" max="4" />
+            <input type="number" id="cols" placeholder="Columns" min="2" max="4" />
+            <button onclick="checkDimensions()">Submit Dimensions</button>
+          </div>
+          <div id="product-input" style="display: none">
+            <p>Enter the product matrix:</p>
+            <div id="input-fields"></div>
+            <button onclick="checkProduct()">Submit Product</button>
+          </div>
+          <div id="message"></div>
+          <button onclick="nextQuestion()" style="display: none">Next Question</button>
+        </div>
+      </section>
+    </main>
+    <script>
+      let score = 0
+      let maxScore = 15
+      let matrixA, matrixB, productMatrix
+      let noSolutionCount4 = 0 // Counter for Problem 4
+
+      function generateMatrix(rows, cols) {
+        return Array.from({ length: rows }, () => Array.from({ length: cols }, () => Math.floor(Math.random() * 5) - 2))
+      }
+
+      function displayMatrices() {
+        const container = document.getElementById("matrices")
+        container.innerHTML = ""
+        ;[matrixA, matrixB].forEach((matrix, index) => {
+          const matrixDiv = document.createElement("div")
+          matrixDiv.className = "matrix"
+          matrixDiv.innerHTML = `<h3>Matrix ${index === 0 ? "A" : "B"}</h3>`
+          matrix.forEach(row => {
+            const rowDiv = document.createElement("div")
+            rowDiv.className = "matrix-row"
+            row.forEach(cell => {
+              const cellDiv = document.createElement("div")
+              cellDiv.className = "matrix-cell"
+              cellDiv.textContent = cell
+              rowDiv.appendChild(cellDiv)
+            })
+            matrixDiv.appendChild(rowDiv)
+          })
+          container.appendChild(matrixDiv)
+        })
+      }
+
+      function generateQuestion() {
+        const dimensions = [2, 3, 4]
+        const rowsA = dimensions[Math.floor(Math.random() * dimensions.length)]
+        const colsA = dimensions[Math.floor(Math.random() * dimensions.length)]
+        let rowsB, colsB
+
+        // If we've had 3 consecutive no-solution problems, force a solution
+        if (noSolutionCount4 >= 3) {
+          rowsB = colsA
+          colsB = dimensions[Math.floor(Math.random() * dimensions.length)]
+        } else {
+          if (Math.random() < 0.6) {
+            // 60% chance of valid multiplication
+            rowsB = colsA
+            colsB = dimensions[Math.floor(Math.random() * dimensions.length)]
+          } else {
+            // 40% chance of invalid multiplication
+            do {
+              rowsB = dimensions[Math.floor(Math.random() * dimensions.length)]
+            } while (rowsB === colsA)
+            colsB = dimensions[Math.floor(Math.random() * dimensions.length)]
+          }
+        }
+
+        matrixA = generateMatrix(rowsA, colsA)
+        matrixB = generateMatrix(rowsB, colsB)
+
+        if (colsA === rowsB) {
+          productMatrix = Array.from({ length: rowsA }, () => Array(colsB).fill(0))
+          for (let i = 0; i < rowsA; i++) {
+            for (let j = 0; j < colsB; j++) {
+              for (let k = 0; k < colsA; k++) {
+                productMatrix[i][j] += matrixA[i][k] * matrixB[k][j]
+              }
+            }
+          }
+          noSolutionCount4 = 0 // Reset counter when we have a solution
+        } else {
+          productMatrix = null
+          noSolutionCount4++ // Increment counter for no solution
+        }
+
+        let questionText = `Given matrices A (${rowsA}x${colsA}) and B (${rowsB}x${colsB}), can they be multiplied? If so, what are the dimensions of the product, and what is the product matrix?`
+        document.getElementById("question").innerHTML = questionText
+
+        displayMatrices()
+
+        document.getElementById("existence-input").style.display = "block"
+        document.getElementById("dimension-input").style.display = "none"
+        document.getElementById("product-input").style.display = "none"
+        document.getElementById("message").innerHTML = ""
+        document.querySelector('button[onclick="nextQuestion()"]').style.display = "none"
+      }
+
+      function checkExistence(userAnswer) {
+        const correctAnswer = productMatrix !== null
+        if (userAnswer === correctAnswer) {
+          score = Math.min(maxScore, score + 1)
+          document.getElementById("message").innerHTML = "Correct!"
+          if (correctAnswer) {
+            document.getElementById("dimension-input").style.display = "block"
+          } else {
+            document.querySelector('button[onclick="nextQuestion()"]').style.display = "block"
+          }
+        } else {
+          score = Math.max(0, score - 1)
+          document.getElementById("message").innerHTML = "Incorrect."
+          document.querySelector('button[onclick="nextQuestion()"]').style.display = "block"
+        }
+        document.getElementById("existence-input").style.display = "none"
+        updateScore()
+      }
+
+      function checkDimensions() {
+        const userRows = parseInt(document.getElementById("rows").value)
+        const userCols = parseInt(document.getElementById("cols").value)
+        const correctRows = productMatrix.length
+        const correctCols = productMatrix[0].length
+
+        if (userRows === correctRows && userCols === correctCols) {
+          score = Math.min(maxScore, score + 1)
+          document.getElementById("message").innerHTML = "Correct dimensions!"
+          setupProductInput()
+        } else {
+          score = Math.max(0, score - 1)
+          document.getElementById("message").innerHTML = `Incorrect. The correct dimensions are ${correctRows}x${correctCols}.`
+          document.querySelector('button[onclick="nextQuestion()"]').style.display = "block"
+        }
+        updateScore()
+      }
+
+      function setupProductInput() {
+        const inputFields = document.getElementById("input-fields")
+        inputFields.innerHTML = ""
+        for (let i = 0; i < productMatrix.length; i++) {
+          const row = document.createElement("div")
+          for (let j = 0; j < productMatrix[i].length; j++) {
+            const input = document.createElement("input")
+            input.type = "number"
+            input.id = `product${i}-${j}`
+            row.appendChild(input)
+          }
+          inputFields.appendChild(row)
+        }
+        document.getElementById("dimension-input").style.display = "none"
+        document.getElementById("product-input").style.display = "block"
+      }
+
+      function checkProduct() {
+        let userProduct = productMatrix.map((row, i) => row.map((_, j) => parseInt(document.getElementById(`product${i}-${j}`).value)))
+
+        const resultDiv = document.createElement("div")
+        resultDiv.className = "matrix"
+        let correctCount = 0
+        let totalCells = 0
+
+        for (let i = 0; i < productMatrix.length; i++) {
+          const rowDiv = document.createElement("div")
+          rowDiv.className = "matrix-row"
+          for (let j = 0; j < productMatrix[i].length; j++) {
+            const cellDiv = document.createElement("div")
+            cellDiv.className = "matrix-cell"
+            if (isNaN(userProduct[i][j])) {
+              cellDiv.textContent = ""
+            } else {
+              cellDiv.textContent = userProduct[i][j]
+            }
+
+            if (userProduct[i][j] === productMatrix[i][j]) {
+              cellDiv.classList.add("correct")
+              correctCount++
+            } else {
+              cellDiv.classList.add("incorrect")
+            }
+            rowDiv.appendChild(cellDiv)
+            totalCells++
+          }
+          resultDiv.appendChild(rowDiv)
+        }
+
+        let scoreChange = correctCount * 0.5 - (totalCells - correctCount) * 0.5
+        score = Math.max(0, Math.min(maxScore, score + scoreChange))
+
+        document.getElementById("message").innerHTML = "Result:"
+        document.getElementById("message").appendChild(resultDiv)
+        document.getElementById("product-input").style.display = "none"
+        document.querySelector('button[onclick="nextQuestion()"]').style.display = "block"
+
+        updateScore()
+      }
+
+      function updateScore() {
+        document.getElementById("score").innerHTML = `Score: ${score.toFixed(1)}`
+      }
+
+      function nextQuestion() {
+        if (score < maxScore) {
+          generateQuestion()
+        } else {
+          document.getElementById("question").innerHTML = "Congratulations! You've reached the maximum score!"
+          document.getElementById("matrices").innerHTML = ""
+          document.getElementById("existence-input").style.display = "none"
+          document.getElementById("dimension-input").style.display = "none"
+          document.getElementById("product-input").style.display = "none"
+          document.querySelector('button[onclick="nextQuestion()"]').style.display = "none"
+        }
+      }
+
+      // Start the game
+      generateQuestion()
+    </script>
+    <script>
+      // Tab switching functionality
+      function showTab(tabName) {
+        const tabs = document.querySelectorAll(".tab-content")
+        const links = document.querySelectorAll(".tab-link")
+
+        tabs.forEach(tab => tab.classList.remove("active"))
+        links.forEach(link => link.classList.remove("active"))
+
+        document.getElementById(tabName).classList.add("active")
+        event.target.classList.add("active")
+      }
+
+      // Name submission functionality
+      document.getElementById("submitName").addEventListener("click", function () {
+        const nameInput = document.getElementById("username")
+        const submitButton = document.getElementById("submitName")
+
+        if (nameInput.value.trim() === "") {
+          alert("Please enter your name before submitting.")
+          return
+        }
+
+        nameInput.readOnly = true
+        submitButton.disabled = true
+      })
+
+      // Problem 1: Vector Operations
+      let score1 = 0
+      let maxScore1 = 6
+      let currentVector1, currentVector2, currentOperation1
+      let answerExists1
+      let correctAnswer1
+
+      function generateVector(dimension) {
+        return Array.from({ length: dimension }, () => Math.floor(Math.random() * 10) - 5)
+      }
+
+      function vectorToString(vector) {
+        return `(${vector.join(", ")})`
+      }
+
+      function generateQuestion1() {
+        const dimension = Math.floor(Math.random() * 3) + 3
+
+        currentVector1 = generateVector(dimension)
+        currentVector2 = generateVector(dimension)
+        const operations = ["+", "-", "â‹…"]
+        currentOperation1 = operations[Math.floor(Math.random() * operations.length)]
+
+        let questionText = `Given vectors A = ${vectorToString(currentVector1)} and B = ${vectorToString(currentVector2)}, `
+        questionText += `calculate A ${currentOperation1} B.`
+
+        document.getElementById("question1").innerHTML = questionText
+        document.getElementById("answer-input1").style.display = "block"
+        document.getElementById("vector-input1").style.display = "none"
+        document.getElementById("message1").innerHTML = ""
+        document.querySelector('#vectors button[onclick="nextQuestion1()"]').style.display = "none"
+
+        answerExists1 = true
+        if (currentOperation1 === "+" || currentOperation1 === "-") {
+          correctAnswer1 = currentVector1.map((v, i) => (currentOperation1 === "+" ? v + currentVector2[i] : v - currentVector2[i]))
+        } else {
+          correctAnswer1 = currentVector1.reduce((sum, v, i) => sum + v * currentVector2[i], 0)
+        }
+      }
+
+      function checkExistence1(userAnswer) {
+        if (userAnswer === answerExists1) {
+          score1 = Math.min(maxScore1, score1 + 1)
+          document.getElementById("message1").innerHTML = "Correct! The answer does exist."
+        } else {
+          score1 = Math.max(0, score1 - 1)
+          document.getElementById("message1").innerHTML = "Incorrect. The answer does exist."
+        }
+        updateScore1()
+
+        document.getElementById("answer-input1").style.display = "none"
+        if (answerExists1) {
+          setupVectorInput1()
+        } else {
+          document.querySelector('#vectors button[onclick="nextQuestion1()"]').style.display = "block"
+        }
+      }
+
+      function setupVectorInput1() {
+        const inputFields = document.getElementById("input-fields1")
+        inputFields.innerHTML = ""
+        if (currentOperation1 === "+" || currentOperation1 === "-") {
+          for (let i = 0; i < currentVector1.length; i++) {
+            inputFields.innerHTML += `<input type="number" id="answer1_${i}">`
+          }
+        } else {
+          inputFields.innerHTML = '<input type="number" id="answer1_0">'
+        }
+        document.getElementById("vector-input1").style.display = "block"
+      }
+
+      function checkAnswer1() {
+        let userAnswer
+        if (currentOperation1 === "+" || currentOperation1 === "-") {
+          userAnswer = Array.from({ length: currentVector1.length }, (_, i) => parseInt(document.getElementById(`answer1_${i}`).value))
+        } else {
+          userAnswer = parseInt(document.getElementById("answer1_0").value)
+        }
+
+        if (JSON.stringify(userAnswer) === JSON.stringify(correctAnswer1)) {
+          score1 = Math.min(maxScore1, score1 + 1)
+          document.getElementById("message1").innerHTML = "Correct answer!"
+        } else {
+          score1 = Math.max(0, score1 - 1)
+          document.getElementById("message1").innerHTML = `Incorrect. The correct answer is ${JSON.stringify(correctAnswer1)}.`
+        }
+        updateScore1()
+
+        document.getElementById("vector-input1").style.display = "none"
+        document.querySelector('#vectors button[onclick="nextQuestion1()"]').style.display = "block"
+      }
+
+      function updateScore1() {
+        document.getElementById("score1").innerHTML = `Score: ${score1}`
+      }
+
+      function nextQuestion1() {
+        if (score1 < maxScore1) {
+          generateQuestion1()
+        } else {
+          document.getElementById("question1").innerHTML = "Congratulations! You've reached the maximum score!"
+          document.getElementById("answer-input1").style.display = "none"
+          document.getElementById("vector-input1").style.display = "none"
+          document.querySelector('#vectors button[onclick="nextQuestion1()"]').style.display = "none"
+        }
+      }
+
+      // Problem 2: Matrix Addition/Subtraction
+      let score2 = 0
+      let maxScore2 = 9
+      let currentMatrix1_2, currentMatrix2_2, currentOperation2
+      let answerExists2
+      let correctAnswer2
+      let noSolutionCount2 = 0 // Counter for Problem 2
+
+      function generateMatrix2(rows, cols) {
+        return Array.from({ length: rows }, () => Array.from({ length: cols }, () => Math.floor(Math.random() * 10) - 5))
+      }
+
+      function displayMatrix(matrix, containerId) {
+        const container = document.getElementById(containerId)
+        container.innerHTML = ""
+        const matrixDiv = document.createElement("div")
+        matrixDiv.className = "matrix"
+        matrix.forEach(row => {
+          const rowDiv = document.createElement("div")
+          rowDiv.className = "matrix-row"
+          row.forEach(cell => {
+            const cellDiv = document.createElement("div")
+            cellDiv.className = "matrix-cell"
+            cellDiv.textContent = cell
+            rowDiv.appendChild(cellDiv)
+          })
+          matrixDiv.appendChild(rowDiv)
+        })
+        container.appendChild(matrixDiv)
+      }
+
+      function generateQuestion2() {
+        const dimensions = [2, 3, 4]
+        let rows1, cols1, rows2, cols2
+
+        // If we've had 3 consecutive no-solution problems, force a solution
+        if (noSolutionCount2 >= 3) {
+          rows1 = dimensions[Math.floor(Math.random() * dimensions.length)]
+          cols1 = dimensions[Math.floor(Math.random() * dimensions.length)]
+          rows2 = rows1
+          cols2 = cols1
+        } else {
+          rows1 = dimensions[Math.floor(Math.random() * dimensions.length)]
+          cols1 = dimensions[Math.floor(Math.random() * dimensions.length)]
+          rows2 = dimensions[Math.floor(Math.random() * dimensions.length)]
+          cols2 = dimensions[Math.floor(Math.random() * dimensions.length)]
+        }
+
+        currentMatrix1_2 = generateMatrix2(rows1, cols1)
+        currentMatrix2_2 = generateMatrix2(rows2, cols2)
+        currentOperation2 = Math.random() < 0.5 ? "+" : "-"
+
+        let questionText = `Given matrices A (${rows1}x${cols1}) and B (${rows2}x${cols2}), calculate A ${currentOperation2} B.`
+        document.getElementById("question2").innerHTML = questionText
+
+        const matricesContainer = document.getElementById("matrices2")
+        matricesContainer.innerHTML = '<div id="matrix2_1"></div><div id="operation">' + currentOperation2 + '</div><div id="matrix2_2"></div>'
+        displayMatrix(currentMatrix1_2, "matrix2_1")
+        displayMatrix(currentMatrix2_2, "matrix2_2")
+
+        document.getElementById("answer-input2").style.display = "block"
+        document.getElementById("matrix-input2").style.display = "none"
+        document.getElementById("message2").innerHTML = ""
+        document.querySelector('button[onclick="nextQuestion2()"]').style.display = "none"
+
+        answerExists2 = rows1 === rows2 && cols1 === cols2
+        if (answerExists2) {
+          correctAnswer2 = currentMatrix1_2.map((row, i) => row.map((cell, j) => (currentOperation2 === "+" ? cell + currentMatrix2_2[i][j] : cell - currentMatrix2_2[i][j])))
+          noSolutionCount2 = 0 // Reset counter when we have a solution
+        } else {
+          noSolutionCount2++ // Increment counter for no solution
+        }
+      }
+
+      function checkExistence2(userAnswer) {
+        if (userAnswer === answerExists2) {
+          score2 = Math.min(maxScore2, score2 + 1)
+          document.getElementById("message2").innerHTML = `Correct! The answer ${answerExists2 ? "does" : "does not"} exist.`
+        } else {
+          score2 = Math.max(0, score2 - 1)
+          document.getElementById("message2").innerHTML = `Incorrect. The answer ${answerExists2 ? "does" : "does not"} exist.`
+        }
+        updateScore2()
+
+        document.getElementById("answer-input2").style.display = "none"
+        if (answerExists2) {
+          setupMatrixInput2()
+        } else {
+          document.querySelector('button[onclick="nextQuestion2()"]').style.display = "block"
+        }
+      }
+
+      function setupMatrixInput2() {
+        const inputFields = document.getElementById("input-fields2")
+        inputFields.innerHTML = ""
+        for (let i = 0; i < currentMatrix1_2.length; i++) {
+          const row = document.createElement("div")
+          for (let j = 0; j < currentMatrix1_2[i].length; j++) {
+            const input = document.createElement("input")
+            input.type = "number"
+            input.id = `answer2_${i}-${j}`
+            row.appendChild(input)
+          }
+          inputFields.appendChild(row)
+        }
+        document.getElementById("matrix-input2").style.display = "block"
+      }
+
+      function checkAnswer2() {
+        let userAnswer = currentMatrix1_2.map((row, i) => row.map((_, j) => parseInt(document.getElementById(`answer2_${i}-${j}`).value)))
+
+        if (JSON.stringify(userAnswer) === JSON.stringify(correctAnswer2)) {
+          score2 = Math.min(maxScore2, score2 + 2)
+          document.getElementById("message2").innerHTML = "Correct answer!"
+        } else {
+          score2 = Math.max(0, score2 - 1)
+          document.getElementById("message2").innerHTML = "Incorrect. The correct answer is:"
+          displayMatrix(correctAnswer2, "message2")
+        }
+        updateScore2()
+
+        document.getElementById("matrix-input2").style.display = "none"
+        document.querySelector('button[onclick="nextQuestion2()"]').style.display = "block"
+      }
+
+      function updateScore2() {
+        document.getElementById("score2").innerHTML = `Score: ${score2}`
+      }
+
+      function nextQuestion2() {
+        if (score2 < maxScore2) {
+          generateQuestion2()
+        } else {
+          document.getElementById("question2").innerHTML = "Congratulations! You've reached the maximum score!"
+          document.getElementById("matrices2").innerHTML = ""
+          document.getElementById("answer-input2").style.display = "none"
+          document.getElementById("matrix-input2").style.display = "none"
+          document.querySelector('button[onclick="nextQuestion2()"]').style.display = "none"
+        }
+      }
+
+      // Problem 3: Matrix Transpose
+      let score3 = 0
+      let maxScore3 = 6
+      let currentMatrix3, transposedMatrix3
+
+      function generateQuestion3() {
+        const dimensions = [2, 3, 4]
+        const rows = dimensions[Math.floor(Math.random() * dimensions.length)]
+        const cols = dimensions[Math.floor(Math.random() * dimensions.length)]
+
+        currentMatrix3 = generateMatrix2(rows, cols)
+        transposedMatrix3 = currentMatrix3[0].map((_, colIndex) => currentMatrix3.map(row => row[colIndex]))
+
+        let questionText = `Given the matrix A (${rows}x${cols}), what are the dimensions of its transpose, and what is the transposed matrix?`
+        document.getElementById("question3").innerHTML = questionText
+
+        displayMatrix(currentMatrix3, "matrix3")
+
+        document.getElementById("dimension-input3").style.display = "block"
+        document.getElementById("transpose-input3").style.display = "none"
+        document.getElementById("message3").innerHTML = ""
+        document.querySelector('button[onclick="nextQuestion3()"]').style.display = "none"
+      }
+
+      function checkDimensions3() {
+        const userRows = parseInt(document.getElementById("rows3").value)
+        const userCols = parseInt(document.getElementById("cols3").value)
+        const correctRows = transposedMatrix3.length
+        const correctCols = transposedMatrix3[0].length
+
+        if (userRows === correctRows && userCols === correctCols) {
+          score3 = Math.min(maxScore3, score3 + 1)
+          document.getElementById("message3").innerHTML = "Correct dimensions!"
+          setupTransposeInput3()
+        } else {
+          score3 = Math.max(0, score3 - 1)
+          document.getElementById("message3").innerHTML = `Incorrect. The correct dimensions are ${correctRows}x${correctCols}.`
+          document.querySelector('button[onclick="nextQuestion3()"]').style.display = "block"
+        }
+        updateScore3()
+      }
+
+      function setupTransposeInput3() {
+        const inputFields = document.getElementById("input-fields3")
+        inputFields.innerHTML = ""
+        for (let i = 0; i < transposedMatrix3.length; i++) {
+          const row = document.createElement("div")
+          for (let j = 0; j < transposedMatrix3[i].length; j++) {
+            const input = document.createElement("input")
+            input.type = "number"
+            input.id = `transpose3_${i}-${j}`
+            row.appendChild(input)
+          }
+          inputFields.appendChild(row)
+        }
+        document.getElementById("dimension-input3").style.display = "none"
+        document.getElementById("transpose-input3").style.display = "block"
+      }
+
+      function checkTranspose3() {
+        let userTranspose = transposedMatrix3.map((row, i) => row.map((_, j) => parseInt(document.getElementById(`transpose3_${i}-${j}`).value)))
+
+        if (JSON.stringify(userTranspose) === JSON.stringify(transposedMatrix3)) {
+          score3 = Math.min(maxScore3, score3 + 2)
+          document.getElementById("message3").innerHTML = "Correct transpose!"
+        } else {
+          score3 = Math.max(0, score3 - 1)
+          document.getElementById("message3").innerHTML = "Incorrect. The correct transpose is:"
+          displayMatrix(transposedMatrix3, "message3")
+        }
+        updateScore3()
+
+        document.getElementById("transpose-input3").style.display = "none"
+        document.querySelector('button[onclick="nextQuestion3()"]').style.display = "block"
+      }
+
+      function updateScore3() {
+        document.getElementById("score3").innerHTML = `Score: ${score3}`
+      }
+
+      function nextQuestion3() {
+        if (score3 < maxScore3) {
+          generateQuestion3()
+        } else {
+          document.getElementById("question3").innerHTML = "Congratulations! You've reached the maximum score!"
+          document.getElementById("matrix3").innerHTML = ""
+          document.getElementById("dimension-input3").style.display = "none"
+          document.getElementById("transpose-input3").style.display = "none"
+          document.querySelector('button[onclick="nextQuestion3()"]').style.display = "none"
+        }
+      }
+
+      // Initialize all problems when page loads
+      window.onload = function () {
+        generateQuestion1()
+        generateQuestion2()
+        generateQuestion3()
+      }
+    </script>
+  </body>
+</html>
